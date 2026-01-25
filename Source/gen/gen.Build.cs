@@ -1,27 +1,28 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
+﻿using UnrealBuildTool;
+using System.IO;
 
 public class gen : ModuleRules
 {
-	public gen(ReadOnlyTargetRules Target) : base(Target)
-	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+    public gen(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] 
-		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "ProceduralMeshComponent", "Kismet"
+        PublicDependencyModuleNames.AddRange(new string[]
+        {
+            "Core", "CoreUObject", "Engine", "InputCore",
+            "EnhancedInput", "ProceduralMeshComponent", "Kismet"
         });
 
+        PrivateDependencyModuleNames.AddRange(new string[] { });
 
-        PrivateDependencyModuleNames.AddRange(new string[] {  });
+        // KissFFT (compile from source .c files)
+        string KissFFTPath = Path.Combine(ModuleDirectory, "ThirdParty", "KissFFT");
 
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
-		// Uncomment if you are using online features
-		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+        PublicIncludePaths.Add(KissFFTPath);
 
-		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
-	}
+        PrivateDependencyModuleNames.AddRange(new string[] { });
+
+        
+        PublicDefinitions.Add("KISS_FFT_STATIC=1");
+    }
 }

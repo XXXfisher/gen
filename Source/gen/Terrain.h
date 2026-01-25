@@ -23,7 +23,7 @@ protected:
 
 public:	
 	UPROPERTY(EditAnywhere, Category = "Terrain")
-	int32 Power = 6;
+	int32 Power = 7;
 
 	UPROPERTY(EditAnywhere, Category = "Terrain")
 	float GridSpacing = 100.0f;

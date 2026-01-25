@@ -2,6 +2,9 @@
 
 
 #include "Terrain.h"
+#include "TerrainGenerator_DiamondSquare.h"
+#include "TerrainGenerator_FFT.h"
+
 
 // Sets default values
 ATerrain::ATerrain()
@@ -31,9 +34,27 @@ void ATerrain::Generate()
 		return;
 	}
 
-	const int32 Size = (1 << Power) + 1;
+	int32 Size = 0;
+
+	// Diamond-Square 使用 (2^Power + 1)
+	if (Generator->IsA(UTerrainGenerator_DiamondSquare::StaticClass()))
+	{
+		Size = (1 << Power) + 1;
+	}
+	// FFT 使用 2^Power
+	else if (Generator->IsA(UTerrainGenerator_FFT::StaticClass()))
+	{
+		Size = (1 << Power);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Unknown terrain generator type!"));
+		return;
+	}
+
 	TArray<float> Height;
 	Generator->GenerateHeightMap(Height, Size, Seed);
+
 
 	// Build mesh data
 	TArray<FVector> Vertices;
