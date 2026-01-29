@@ -35,6 +35,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "DiamondSquare")
 	bool bRegenerate = false; // 勾一下强制重建（方便）
 
+	UPROPERTY(EditAnywhere, Category = "Erosion")
+	float ErosionRate = 0.5f;
+
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProceduralMeshComponent> ProcMesh;
@@ -42,6 +46,7 @@ private:
 	void Generate();
 
 	void DiamondSquare(TArray<float>& H, int32 Size, FRandomStream& Rng);
+	void ThermalErosion(TArray<float>& H, int32 Size, float Talus, int32 Iter);
 	float Get(const TArray<float>& H, int32 Size, int32 X, int32 Y) const;
 	void Set(TArray<float>& H, int32 Size, int32 X, int32 Y, float V);
 	int32 Idx(int32 Size, int32 X, int32 Y) const { return Y * Size + X; }

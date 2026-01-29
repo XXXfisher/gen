@@ -22,6 +22,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FFT")
 	int32 Octaves = 4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FFT")
+	float Gain = 50.0f;
+
+
 	virtual void GenerateHeightMap(
 		TArray<float>& OutHeight,
 		int32 Size,

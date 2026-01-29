@@ -105,6 +105,56 @@ void ADS_TerrainActor::DiamondSquare(TArray<float>& H, int32 Size, FRandomStream
 	}
 }
 
+void ADS_TerrainActor::ThermalErosion(TArray<float>& H, int32 Size, float Talus, int32 Iter)
+{
+	auto Id = [&](int32 x, int32 y)
+		{
+			return y * Size + x;
+		};
+
+	for (int32 k = 0; k < Iter; k++)
+	{
+		for (int32 y = 1; y < Size - 1; y++)
+		{
+			for (int32 x = 1; x < Size - 1; x++)
+			{
+				float h = H[Id(x, y)];
+
+				float maxDrop = 0.0f;
+				int32 nx = x, ny = y;
+
+				// 找最大落差方向
+				for (int32 dy = -1; dy <= 1; dy++)
+				{
+					for (int32 dx = -1; dx <= 1; dx++)
+					{
+						if (dx == 0 && dy == 0) continue;
+
+						float nh = H[Id(x + dx, y + dy)];
+						float drop = h - nh;
+
+						if (drop > maxDrop)
+						{
+							maxDrop = drop;
+							nx = x + dx;
+							ny = y + dy;
+						}
+					}
+				}
+
+				// 如果坡度超过 Talus，就移动一点土
+				if (maxDrop > Talus)
+				{
+					float amount = (maxDrop - Talus) * ErosionRate;
+					H[Id(x, y)] -= amount;
+					H[Id(nx, ny)] += amount;
+				}
+			}
+		}
+	}
+}
+
+
 void ADS_TerrainActor::Generate()
 {
 	const int32 P = FMath::Clamp(Power, 1, 11); // 2^11+1=2049，太大会很慢
@@ -116,6 +166,9 @@ void ADS_TerrainActor::Generate()
 	Height.SetNumZeroed(Size * Size);
 
 	DiamondSquare(Height, Size, Rng);
+
+	ThermalErosion(Height, Size, 0.01f, 200);
+
 
 	// 归一化到 [0,1] 再映射到 [0, MaxHeight]
 	float MinV = Height[0], MaxV = Height[0];
